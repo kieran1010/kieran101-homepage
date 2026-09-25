@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kieran Gillick</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #F5F3EE; --bg-card: #FAFAF7; --text: #1a1a18; --text-muted: #6b6b63; --text-light: #9b9b93;
+    --accent: #1D4E5F; --accent-light: #2E7A92; --accent-pale: #E4EFF3;
+    --border: rgba(26,26,24,0.10); --border-strong: rgba(26,26,24,0.20);
+    --serif: 'Cormorant Garamond', Georgia, serif; --sans: 'DM Sans', system-ui, sans-serif; --nav-h: 68px;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.7; overflow-x: hidden; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
+    background: rgba(245,243,238,0.88); backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 clamp(1.5rem, 5vw, 4rem); z-index: 100; transition: box-shadow 0.3s;
+  }
+  nav.scrolled { box-shadow: 0 1px 20px rgba(0,0,0,0.06); }
+  .nav-brand { font-family: var(--serif); font-size: 1.35rem; font-weight: 400; color: var(--text); text-decoration: none; }
+  .nav-brand em { font-style: italic; color: var(--accent); }
+  .nav-links { display: flex; gap: 1.6rem; list-style: none; }
+  .nav-links a { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-hamburger { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
+  .nav-hamburger span { width: 22px; height: 1.5px; background: var(--text); display: block; }
+
+  .hero {
+    min-height: 100vh; padding-top: var(--nav-h);
+    display: grid; grid-template-columns: 1fr 1fr; align-items: center;
+    max-width: 1200px; margin: 0 auto; padding-left: clamp(1.5rem,5vw,4rem); padding-right: clamp(1.5rem,5vw,4rem);
+  }
+  .hero-text { padding: 4rem 0; }
+  .hero-eyebrow { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+  .hero-eyebrow::before { content: ''; display: inline-block; width: 32px; height: 1px; background: var(--accent); }
+  .hero-title { font-family: var(--serif); font-size: clamp(3rem,5.5vw,5.5rem); font-weight: 300; line-height: 1.08; margin-bottom: 0.75rem; }
+  .hero-title em { font-style: italic; color: var(--accent); }
+  .hero-postnominals { font-family: var(--serif); font-size: 1rem; font-weight: 300; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 1.5rem; }
+  .hero-subtitle { font-size: 1.05rem; color: var(--text-muted); font-weight: 300; max-width: 38ch; margin-bottom: 2.5rem; line-height: 1.75; }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .btn { display: inline-block; padding: 0.75rem 1.75rem; font-family: var(--sans); font-size: 0.82rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; border-radius: 2px; transition: all 0.2s; cursor: pointer; border: none; }
+  .btn-primary { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
+  .btn-primary:hover { background: var(--accent-light); border-color: var(--accent-light); }
+  .btn-ghost { background: transparent; color: var(--text); border: 0.5px solid var(--border-strong); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hero-visual { display: flex; justify-content: flex-end; align-items: center; padding: 4rem 0 4rem 3rem; }
+  .hero-monogram { width: clamp(240px,30vw,380px); height: clamp(240px,30vw,380px); border-radius: 50% 40% 50% 40%; background: var(--accent-pale); border: 0.5px solid var(--border-strong); display: flex; align-items: center; justify-content: center; position: relative; animation: float 6s ease-in-out infinite; }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+  .hero-monogram-inner { font-family: var(--serif); font-size: clamp(5rem,9vw,9rem); font-weight: 300; font-style: italic; color: var(--accent); line-height: 1; user-select: none; }
+  .hero-monogram::after { content: 'FRCA · PhD · MBBS'; position: absolute; bottom: -2.25rem; left: 50%; transform: translateX(-50%); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-light); white-space: nowrap; }
+
+  .section { padding: clamp(4rem,8vw,8rem) clamp(1.5rem,5vw,4rem); max-width: 1200px; margin: 0 auto; }
+  .section-divider { height: 0.5px; background: var(--border); max-width: 1200px; margin: 0 auto; }
+  .section-label { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+  .section-title { font-family: var(--serif); font-size: clamp(2rem,3.5vw,3.2rem); font-weight: 300; line-height: 1.15; margin-bottom: 1.5rem; }
+  .section-title em { font-style: italic; }
+  .section-lead { font-size: 1rem; color: var(--text-muted); max-width: 65ch; font-weight: 300; line-height: 1.8; margin-bottom: 3rem; }
+
+  /* Role cards */
+  .roles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5px; background: var(--border); border: 0.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .role-card { background: var(--bg-card); padding: 2rem; display: flex; flex-direction: column; gap: 0.75rem; transition: background 0.2s; }
+  .role-card:hover { background: var(--accent-pale); }
+  .role-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--accent-pale); border: 0.5px solid var(--accent-light); display: flex; align-items: center; justify-content: center; }
+  .role-card:hover .role-icon { background: #fff; }
+  .role-icon svg { width: 18px; height: 18px; stroke: var(--accent); fill: none; stroke-width: 1.5; }
+  .role-name { font-family: var(--serif); font-size: 1.2rem; font-weight: 400; }
+  .role-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.65; }
+
+  /* CV */
+  .cv-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 4rem; align-items: start; }
+  .cv-sidebar { position: sticky; top: calc(var(--nav-h) + 2rem); }
+  .cv-sidebar-label { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-light); margin-bottom: 1rem; margin-top: 1.5rem; }
+  .cv-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .cv-tag { font-size: 0.78rem; padding: 0.3rem 0.75rem; border-radius: 2px; border: 0.5px solid var(--border-strong); color: var(--text-muted); }
+  .timeline { display: flex; flex-direction: column; }
+  .timeline-item { display: grid; grid-template-columns: 110px 1fr; gap: 1.75rem; padding: 1.65rem 0; border-bottom: 0.5px solid var(--border); }
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-year { font-size: 0.77rem; color: var(--text-light); padding-top: 0.3rem; line-height: 1.4; }
+  .timeline-role { font-family: var(--serif); font-size: 1.08rem; font-weight: 400; margin-bottom: 0.2rem; }
+  .timeline-org { font-size: 0.82rem; color: var(--accent); font-weight: 500; margin-bottom: 0.4rem; }
+  .timeline-detail { font-size: 0.85rem; color: var(--text-muted); line-height: 1.65; }
+
+  /* Publications */
+  .pubs-list { display: flex; flex-direction: column; }
+  .pub-item { padding: 1.65rem 0; border-bottom: 0.5px solid var(--border); display: grid; grid-template-columns: 2.5rem 1fr; gap: 1.25rem; align-items: start; }
+  .pub-item:last-child { border-bottom: none; }
+  .pub-num { font-family: var(--serif); font-size: 1.4rem; font-weight: 300; font-style: italic; color: var(--text-light); text-align: right; }
+  .pub-title { font-family: var(--serif); font-size: 1rem; font-weight: 400; margin-bottom: 0.35rem; line-height: 1.45; }
+  .pub-title a { color: inherit; text-decoration: none; border-bottom: 0.5px solid var(--border-strong); transition: color 0.2s, border-color 0.2s; }
+  .pub-title a:hover { color: var(--accent); border-color: var(--accent); }
+  .pub-meta { font-size: 0.82rem; color: var(--text-muted); }
+  .pub-journal { color: var(--accent); font-style: italic; }
+
+  /* Presentations */
+  .presentations-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: var(--border); border: 0.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .pres-card { background: var(--bg-card); padding: 1.75rem; display: flex; flex-direction: column; gap: 0.5rem; transition: background 0.2s; }
+  .pres-card:hover { background: var(--accent-pale); }
+  .pres-year { font-size: 0.72rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; }
+  .pres-title { font-family: var(--serif); font-size: 1rem; font-weight: 400; line-height: 1.4; }
+  .pres-venue { font-size: 0.82rem; color: var(--text-muted); }
+  .pres-badge { display: inline-block; font-size: 0.7rem; padding: 0.25rem 0.65rem; border-radius: 2px; background: var(--accent-pale); color: var(--accent); font-weight: 500; align-self: flex-start; margin-top: auto; }
+  .pres-badge.prize { background: #FFF8E6; color: #7a5c00; }
+
+  /* Teaching */
+  .teaching-intro { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 3rem; align-items: start; }
+  .miro-card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 4px; padding: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+  .miro-card-title { font-family: var(--serif); font-size: 1.2rem; font-weight: 400; }
+  .miro-card-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.65; }
+
+  .teaching-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1px; background: var(--border); border: 0.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .teach-card { background: var(--bg-card); padding: 1.25rem 1.5rem; display: flex; gap: 1rem; align-items: flex-start; text-decoration: none; color: var(--text); transition: background 0.2s; border: none; }
+  .teach-card:hover { background: var(--accent-pale); }
+  .teach-card:hover .teach-arrow { opacity: 1; transform: translateX(2px); }
+  .teach-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-pale); border: 0.5px solid var(--accent-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .teach-icon svg { width: 12px; height: 12px; stroke: var(--accent); fill: none; stroke-width: 1.5; }
+  .teach-body { flex: 1; }
+  .teach-label { font-size: 0.68rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.2rem; }
+  .teach-title { font-family: var(--serif); font-size: 0.95rem; line-height: 1.4; }
+  .teach-arrow { font-size: 0.75rem; color: var(--accent); opacity: 0; transition: opacity 0.2s, transform 0.2s; flex-shrink: 0; margin-top: 4px; }
+
+  /* Downloads */
+  .downloads-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+  .downloads-col-title { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; margin-bottom: 0.25rem; }
+  .downloads-col-sub { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6; }
+  .dl-list { display: flex; flex-direction: column; }
+  .dl-item { display: flex; align-items: flex-start; gap: 0.85rem; padding: 0.75rem 0; border-bottom: 0.5px solid var(--border); text-decoration: none; color: var(--text); transition: color 0.2s; }
+  .dl-item:last-child { border-bottom: none; }
+  .dl-item:hover { color: var(--accent); }
+  .dl-item:hover .dl-arrow { opacity: 1; transform: translateX(2px); }
+  .dl-icon { width: 22px; height: 22px; border-radius: 50%; background: var(--accent-pale); border: 0.5px solid var(--accent-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .dl-icon svg { width: 10px; height: 10px; stroke: var(--accent); fill: none; stroke-width: 2; }
+  .dl-meta { flex: 1; }
+  .dl-type { font-size: 0.65rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.1rem; }
+  .dl-title { font-family: var(--serif); font-size: 0.92rem; line-height: 1.4; }
+  .dl-arrow { font-size: 0.7rem; color: var(--accent); opacity: 0; transition: opacity 0.2s, transform 0.2s; flex-shrink: 0; margin-top: 5px; }
+
+  /* Music */
+  .music-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+  .music-genres { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; margin-bottom: 2rem; }
+  .genre-tag { font-size: 0.78rem; padding: 0.35rem 0.85rem; background: var(--accent-pale); color: var(--accent); border-radius: 2px; border: 0.5px solid var(--accent-light); }
+  .music-instruments { display: flex; flex-direction: column; margin-bottom: 2.5rem; }
+  .music-item { display: flex; justify-content: space-between; align-items: center; padding: 0.9rem 0; border-bottom: 0.5px solid var(--border); }
+  .music-item:last-child { border-bottom: none; }
+  .music-item-name { font-family: var(--serif); font-size: 1rem; }
+  .music-item-level { font-size: 0.78rem; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; }
+  .mix-list { display: flex; flex-direction: column; }
+  .mix-item { display: flex; flex-direction: column; padding: 1rem 0; border-bottom: 0.5px solid var(--border); }
+  .mix-item:last-child { border-bottom: none; }
+  .mix-item-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.6rem; }
+  .mix-icon { width: 26px; height: 26px; border-radius: 50%; background: var(--accent-pale); border: 0.5px solid var(--accent-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .mix-icon svg { width: 10px; height: 10px; fill: var(--accent); }
+  .mix-title { font-family: var(--serif); font-size: 0.95rem; flex: 1; }
+  .mix-download { font-size: 0.72rem; color: var(--accent); text-decoration: none; letter-spacing: 0.05em; white-space: nowrap; opacity: 0.8; transition: opacity 0.2s; }
+  .mix-download:hover { opacity: 1; text-decoration: underline; }
+  .mix-item audio { width: 100%; height: 32px; accent-color: var(--accent); }
+
+  /* Contact */
+  .contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+  .contact-methods { display: flex; flex-direction: column; }
+  .contact-item { display: flex; gap: 1.25rem; align-items: flex-start; padding: 1.1rem 0; border-bottom: 0.5px solid var(--border); }
+  .contact-item:last-child { border-bottom: none; }
+  .contact-item-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--accent-pale); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .contact-item-icon svg { width: 14px; height: 14px; stroke: var(--accent); fill: none; stroke-width: 1.5; }
+  .contact-item-label { font-size: 0.72rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.15rem; }
+  .contact-item-val { font-size: 0.9rem; }
+  .contact-item-val a { color: var(--accent); text-decoration: none; }
+  .contact-item-val a:hover { text-decoration: underline; }
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-label { font-size: 0.78rem; color: var(--text-muted); letter-spacing: 0.04em; }
+  .form-input, .form-textarea { font-family: var(--sans); font-size: 0.9rem; padding: 0.7rem 1rem; border: 0.5px solid var(--border-strong); border-radius: 2px; background: var(--bg-card); color: var(--text); transition: border-color 0.2s, box-shadow 0.2s; outline: none; width: 100%; -webkit-appearance: none; }
+  .form-input:focus, .form-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(29,78,95,0.1); }
+  .form-textarea { min-height: 130px; resize: vertical; line-height: 1.6; }
+
+  footer { border-top: 0.5px solid var(--border); padding: 2.5rem clamp(1.5rem,5vw,4rem); display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-light); flex-wrap: wrap; gap: 1rem; max-width: 1200px; margin: 0 auto; }
+  .footer-brand { font-family: var(--serif); font-size: 1rem; color: var(--text-muted); }
+
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    .teaching-intro { grid-template-columns: 1fr; }
+    .downloads-layout { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-visual { display: none; }
+    .cv-layout, .music-layout, .contact-layout { grid-template-columns: 1fr; }
+    .cv-sidebar { position: static; }
+    .nav-links { display: none; flex-direction: column; position: absolute; top: var(--nav-h); left: 0; right: 0; background: rgba(245,243,238,0.97); padding: 1.5rem clamp(1.5rem,5vw,4rem); gap: 1.25rem; border-bottom: 0.5px solid var(--border); }
+    .nav-links.open { display: flex; }
+    .nav-hamburger { display: flex; }
+    .timeline-item { grid-template-columns: 80px 1fr; gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="#" class="nav-brand">Kieran <em>Gillick</em></a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#cv">CV</a></li>
+    <li><a href="#publications">Publications</a></li>
+    <li><a href="#presentations">Presentations</a></li>
+    <li><a href="#teaching">Teaching</a></li>
+    <li><a href="#downloads">Downloads</a></li>
+    <li><a href="#music">Music</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-text">
+    <div class="hero-eyebrow">Anaesthetist · Wellington, New Zealand</div>
+    <h1 class="hero-title">Kieran<br><em>Gillick</em></h1>
+    <div class="hero-postnominals">FRCA &nbsp;·&nbsp; PhD &nbsp;·&nbsp; MBBS</div>
+    <p class="hero-subtitle">Specialist anaesthetist, educator, musician and lifelong learner.</p>
+    <div class="hero-actions">
+      <a href="#cv" class="btn btn-primary">View CV</a>
+      <a href="#contact" class="btn btn-ghost">Get in touch</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-monogram"><span class="hero-monogram-inner">KG</span></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ABOUT -->
+<section class="section reveal" id="about">
+  <div class="section-label">Who I am</div>
+  <h2 class="section-title">Clinician, researcher,<br><em>and musician</em></h2>
+  <p class="section-lead">I am an anaesthetist at Wellington Regional Hospital with twelve years of postgraduate experience across anaesthesia, critical care, general medicine, retrievals and transfer medicine. Originally trained as a biochemist, I completed doctoral and postdoctoral research in the UK before returning to medical school in 2010. After relocating to New Zealand in 2021, I joined the department of anaesthesia and pain medicine at Wellington Regional Hospital. I hold additional positions as a Senior Clinical Lecturer at the University of Otago, a flight doctor with New Zealand Air Ambulance Service, and an event medic with St John Ambulance.</p>
+  <div class="roles-grid">
+    <div class="role-card">
+      <div class="role-icon"><svg viewBox="0 0 24 24"><path d="M12 2a5 5 0 1 0 0 10A5 5 0 0 0 12 2zM4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+      <div class="role-name">Anaesthetist</div>
+      <p class="role-desc">Specialist anaesthesia at Wellington Regional Hospital. Flight doctor with NZ Air Ambulance Service and event medic with St John — including national and international retrievals.</p>
+    </div>
+    <div class="role-card">
+      <div class="role-icon"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></div>
+      <div class="role-name">Researcher</div>
+      <p class="role-desc">PhD biochemist with publications spanning HIV virology, perioperative medicine, resuscitation, and quality improvement. Interested in the application of AI in clinical practice.</p>
+    </div>
+    <div class="role-card">
+      <div class="role-icon"><svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+      <div class="role-name">Educator</div>
+      <p class="role-desc">Senior Clinical Lecturer at the University of Otago. Committed to teaching at all levels — from school BLS programmes to senior medical student curriculum delivery and OSCE examining.</p>
+    </div>
+    <div class="role-card">
+      <div class="role-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13M9 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm12 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/></svg></div>
+      <div class="role-name">Musician</div>
+      <p class="role-desc">Trumpet, euphonium, tuba and choral singing — plus music production and DJing (drum &amp; bass) under the alias DJ Cell Suicide. Trail running and open-water swimming round out the mix.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CV -->
+<section class="section reveal" id="cv">
+  <div class="cv-layout">
+    <div class="cv-sidebar">
+      <div class="section-label">Curriculum Vitae</div>
+      <h2 class="section-title" style="font-size:clamp(1.6rem,2.5vw,2.2rem);">Training &amp;<br><em>experience</em></h2>
+      <p style="font-size:0.88rem;color:var(--text-muted);line-height:1.75;margin-bottom:1.5rem;">A career spanning biochemistry, HIV research, medical school, and specialist anaesthesia training across the UK and New Zealand.</p>
+      <div class="cv-sidebar-label">Clinical interests</div>
+      <div class="cv-tags">
+        <span class="cv-tag">Vascular anaesthesia</span>
+        <span class="cv-tag">Trauma</span>
+        <span class="cv-tag">Airway</span>
+        <span class="cv-tag">Critical care</span>
+        <span class="cv-tag">Retrieval medicine</span>
+        <span class="cv-tag">Medical education</span>
+        <span class="cv-tag">AI in healthcare</span>
+        <span class="cv-tag">Quality improvement</span>
+      </div>
+      <div class="cv-sidebar-label">Qualifications</div>
+      <div class="cv-tags">
+        <span class="cv-tag">ANZCA Provisional Fellow</span>
+        <span class="cv-tag">FRCA</span>
+        <span class="cv-tag">PhD — UCL</span>
+        <span class="cv-tag">MBBS — St George's</span>
+        <span class="cv-tag">MA Hons — Cambridge</span>
+        <span class="cv-tag">FHEA (Merit)</span>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item"><div class="timeline-year">2025 – present</div><div><div class="timeline-role">Senior Clinical Lecturer</div><div class="timeline-org">University of Otago</div><div class="timeline-detail">Curriculum delivery to senior medical students. Lecturing, small-group tutorials and clinical supervision.</div></div></div>
+      <div class="timeline-item"><div class="timeline-year">2023 – present</div><div><div class="timeline-role">Flight Doctor</div><div class="timeline-org">New Zealand Air Ambulance Service</div><div class="timeline-detail">Transport and repatriation services for critically ill adults and children, including national and international flights.</div></div></div>
+      <div class="timeline-item"><div class="timeline-year">2021 – present</div><div><div class="timeline-role">Anaesthetist</div><div class="timeline-org">Te Whatu Ora — Wellington Regional Hospital</div><div class="timeline-detail">Anaesthetic services across elective and emergency surgical lists.</div></div></div>
+      <div class="timeline-item"><div class="timeline-year">2021 – present</div><div><div class="timeline-role">Events Doctor</div><div class="timeline-org">St John Ambulance, New Zealand</div><div class="timeline-detail">Medical cover for entertainment events around New Zealand.</div></div></div>
+      <div class="timeline-item"><div class="timeline-year">2020 – 2021</div><div><div class="timeline-role">Clinical Fellow — Anaesthetics &amp; Critical Care</div><div class="timeline-org">Royal Glamorgan Hospital &amp; Bristol Royal Infirmary</div><div class="timeline-detail">Emergency and elective anaesthesia; general and Covid critical care. Concurrent events doctor role (GCS Medical) for UK music festivals.</div></div></div>
+      <div class="timeline-item"><div class="timeline-year">2018 – 2020</div><div><div class="timeline-role">Anaesthetics Core Trainee</div><div class="timeline-org">Royal Glamorgan &amp; Prince Charles Hospitals, Wales Deanery</div><div class="timeline-detail">Two-year UK anaesthetics core training programme. Additional ten months in general and Covid critical care.</div></div></div>
+      <div class="timeline-item"><div class="timeline-year">2016 – 2018</div><div><div class="timeline-role">Clinical Fellow</div><div class="timeline-org">Bristol Royal Infirmary</div><div class="timeline-detail">Clinical Education Fellow in Acute Oncology; Clinical Fellow in Cystic Fibrosis; locum positions across Bristol hospitals.</div></div></div>
+      <div class="timeline-item"><div class="timeline-year">2014 – 2016</div><div><div class="timeline-role">Foundation Doctor</div><div class="timeline-org">Bristol Royal Infirmary</div><div class="timeline-detail">UK Foundation Programme. Specialties: Acute medicine, Anaesthetics, Critical Care, Stroke, Hepatology, Colorectal Surgery, Trauma &amp; Orthopaedics.</div></div></div>
+      <div class="timeline-item"><div class="timeline-year">2010 – 2014</div><div><div class="timeline-role">MBBS</div><div class="timeline-org">St George's, University of London</div><div class="timeline-detail">Distinction in Clinical Science / Specialties; Merit in Clinical Practice / Medical Science. The Lee Prize in Family Medicine.</div></div></div>
+      <div class="timeline-item"><div class="timeline-year">2007 – 2010</div><div><div class="timeline-role">Postdoctoral Research Associate</div><div class="timeline-org">Department of Infectious Diseases, King's College London</div><div class="timeline-detail">Member of Michael Malim's HIV research group. Laboratory and bioinformatic approaches to understanding HIV virulence.</div></div></div>
+      <div class="timeline-item"><div class="timeline-year">2006 – 2007</div><div><div class="timeline-role">Lecturer</div><div class="timeline-org">West Thames College, Isleworth, London</div><div class="timeline-detail">Curriculum delivery to sixth-form students in chemistry, biology and laboratory skills.</div></div></div>
+      <div class="timeline-item"><div class="timeline-year">2002 – 2006</div><div><div class="timeline-role">PhD Biochemistry</div><div class="timeline-org">University College London</div><div class="timeline-detail">Mechanisms of apoptotic cytochrome c release from isolated mitochondria.</div></div></div>
+      <div class="timeline-item"><div class="timeline-year">1998 – 2001</div><div><div class="timeline-role">MA (Hons) Natural Sciences</div><div class="timeline-org">Cambridge University</div><div class="timeline-detail">Biochemistry, Molecular Biology, Pathology, Physiology, Mathematics.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- PUBLICATIONS -->
+<section class="section reveal" id="publications">
+  <div class="section-label">Research</div>
+  <h2 class="section-title">Publications</h2>
+  <p class="section-lead">Peer-reviewed publications spanning HIV virology, perioperative medicine, resuscitation science, surgical outcomes, and quality improvement.</p>
+  <div class="pubs-list">
+    <div class="pub-item"><div class="pub-num">01</div><div><div class="pub-title"><a href="https://drive.google.com/a/kieran101.com/file/d/1DtBNP9O2j146zGDecWs98BPc76uyfSnK/view?usp=drivesdk" target="_blank">Improving the implementation of a recycling policy in the anaesthetic room — a quality improvement project</a></div><div class="pub-meta">Gillick K. · <span class="pub-journal">Anaesthesia</span> 75 Suppl 2: 9–98 · 2020</div></div></div>
+    <div class="pub-item"><div class="pub-num">02</div><div><div class="pub-title"><a href="https://drive.google.com/a/kieran101.com/file/d/1b-tSKOwqwbdyS6wBdUeZ-TUrsN1mV8vz/view?usp=drivesdk" target="_blank">Serial NSE measurement identifies non-survivors following out-of-hospital cardiac arrest</a></div><div class="pub-meta">Gillick K, Rooney K. · <span class="pub-journal">Resuscitation</span> 128: 24–30 · 2018</div></div></div>
+    <div class="pub-item"><div class="pub-num">03</div><div><div class="pub-title"><a href="https://drive.google.com/a/kieran101.com/file/d/1DtBNP9O2j146zGDecWs98BPc76uyfSnK/view?usp=drivesdk" target="_blank">Financial implications of laparoscopic hot gallbladder service in a non-tertiary District General Hospital</a></div><div class="pub-meta">Bhattacharya S et al. · <span class="pub-journal">Int J Health Plan Manag</span> 33: e1014–e1021 · 2018</div></div></div>
+    <div class="pub-item"><div class="pub-num">04</div><div><div class="pub-title"><a href="https://drive.google.com/a/kieran101.com/file/d/1a9QfWYTDBlsAFhxs_HJW2BVRNqVVU5qt/view?usp=drivesdk" target="_blank">Is Waterlow score a surrogate marker for predicting adverse outcome in acute pancreatitis?</a></div><div class="pub-meta">Gillick K et al. · <span class="pub-journal">Ann R Coll Surg Engl</span> 98: 61–66 · 2016</div></div></div>
+    <div class="pub-item"><div class="pub-num">05</div><div><div class="pub-title"><a href="https://drive.google.com/a/kieran101.com/file/d/1AhhI7l4kBxG_Sc7cvZBG03V-f14qJJTJ/view?usp=drivesdk" target="_blank">Suppression of HIV-1 infection by APOBEC3 proteins in primary human CD4+ T cells is associated with the inhibition of processive reverse transcription as well as excessive cytidine deamination</a></div><div class="pub-meta">Gillick K et al. · <span class="pub-journal">Journal of Virology</span> 87: 1508–1517 · 2013</div></div></div>
+    <div class="pub-item"><div class="pub-num">06</div><div><div class="pub-title"><a href="https://drive.google.com/a/kieran101.com/file/d/1RdzJNG-DK5dpnWeOiptQg8YQ8KNopP7O/view?usp=drivesdk" target="_blank">Evaluating cytochrome c diffusion in the intermembrane spaces of mitochondria during cytochrome c release</a></div><div class="pub-meta">Gillick K, Crompton M. · <span class="pub-journal">Journal of Cell Science</span> 121: 618–626 · 2008</div></div></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CONFERENCE PRESENTATIONS -->
+<section class="section reveal" id="presentations">
+  <div class="section-label">Conference activity</div>
+  <h2 class="section-title">Presentations</h2>
+  <p class="section-lead">National and international presentations and invited talks, with prizes at the Association of Anaesthetists Winter Scientific Meeting and the Society of Intensive Care of the West of England.</p>
+  <div class="presentations-grid">
+    <div class="pres-card"><div class="pres-year">2020</div><div class="pres-title">Implementation of a recycling policy in the anaesthetic room</div><div class="pres-venue">Association of Anaesthetists, Winter Scientific Meeting</div><span class="pres-badge prize">2nd prize — best QI project</span></div>
+    <div class="pres-card"><div class="pres-year">2018</div><div class="pres-title">Implementation of electronic record-keeping in the oncology department</div><div class="pres-venue">Bristol Royal Infirmary, Quality Improvement Presentation Day</div><span class="pres-badge">Shortlisted — best project</span></div>
+    <div class="pres-card"><div class="pres-year">2018</div><div class="pres-title">Serial NSE measurement for prognostication following out-of-hospital cardiac arrest</div><div class="pres-venue">Society of Intensive Care of the West of England, Annual Conference</div><span class="pres-badge prize">Winner — best oral presentation</span></div>
+    <div class="pres-card"><div class="pres-year">2016</div><div class="pres-title">Iatrogenic blood loss and anaemia in a general ITU</div><div class="pres-venue">National Foundation Doctors Presentation Day, NHS</div><span class="pres-badge">Oral presentation</span></div>
+    <div class="pres-card"><div class="pres-year">2013</div><div class="pres-title">Correlations of intraoperative cerebral oxygen saturation with length of stay and postoperative renal dysfunction in on-pump cardiothoracic surgery</div><div class="pres-venue">Association of Cardiothoracic Anaesthetists, Autumn Meeting</div><span class="pres-badge">Oral presentation</span></div>
+    <div class="pres-card"><div class="pres-year">2009</div><div class="pres-title">APOBEC3G inhibits HIV-1 by blocking synthesis of reverse transcripts</div><div class="pres-venue">Cold Spring Harbour Laboratory, Retroviruses Meeting</div><span class="pres-badge">Oral presentation</span></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- TEACHING -->
+<section class="section reveal" id="teaching">
+  <div class="section-label">Education &amp; teaching</div>
+  <h2 class="section-title">Teaching</h2>
+  <p class="section-lead">Teaching resources, slide decks and materials produced for undergraduate medical students, postgraduate trainees and GP education. Includes clinical web tools, a Miro board for interactive teaching, and a library of presentations available to download from Google Drive.</p>
+
+  <div class="teaching-intro">
+    <a class="miro-card" href="https://kieran1010.github.io/DreamsLab/" target="_blank" style="text-decoration:none;color:var(--text);">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--accent-pale);border:0.5px solid var(--accent-light);display:flex;align-items:center;justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5l5 5M14.5 9.5l-5 5"/><path d="M12 7v1M12 16v1M7 12h1M16 12h1"/></svg>
+        </div>
+        <div class="miro-card-title">DreamsLab Anaesthetic Simulator</div>
+      </div>
+      <div class="miro-card-desc">A browser-based anaesthesia teaching simulator. Manage a patient through surgery using a realistic monitor display and drug deck — adjusting ventilation, giving boluses and infusions, and responding to triggered clinical events. Designed for self-directed study and trainee teaching.</div>
+      <div style="margin-top:1rem;font-size:0.78rem;color:var(--accent);font-weight:500;letter-spacing:0.06em;text-transform:uppercase;">Open simulator ↗</div>
+    </a>
+    <a class="miro-card" href="https://kieran1010.github.io/aaa/" target="_blank" style="text-decoration:none;color:var(--text);">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--accent-pale);border:0.5px solid var(--accent-light);display:flex;align-items:center;justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div class="miro-card-title">Theatre Toolkit</div>
+      </div>
+      <div class="miro-card-desc">A clinical web app for Wellington Regional Hospital anaesthesia. Combines drug dosing calculators, a local anaesthetic toxicity tracker, paediatric drug doses, opioid conversion, anticoagulant guidance, POCUS references, and emergency resources in a single mobile-friendly interface.</div>
+      <div style="margin-top:1rem;font-size:0.78rem;color:var(--accent);font-weight:500;letter-spacing:0.06em;text-transform:uppercase;">Open toolkit ↗</div>
+    </a>
+    <a class="miro-card" href="https://miro.com/app/board/uXjVGQEbIqs=/?share_link_id=935768138877" target="_blank" style="text-decoration:none;color:var(--text);">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--accent-pale);border:0.5px solid var(--accent-light);display:flex;align-items:center;justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+        </div>
+        <div class="miro-card-title">Interactive Miro Board</div>
+      </div>
+      <div class="miro-card-desc">A shared Miro whiteboard with teaching diagrams, frameworks and interactive exercises for clinical education. Click to open in Miro.</div>
+      <div style="margin-top:1rem;font-size:0.78rem;color:var(--accent);font-weight:500;letter-spacing:0.06em;text-transform:uppercase;">Open board ↗</div>
+    </a>
+    <div>
+      <p style="font-size:0.88rem;color:var(--text-muted);line-height:1.75;">The presentation library below spans medical school teaching from 2011 through to current postgraduate education — covering topics from basic physiology to clinical audit, oncology, critical care and anaesthesia. All files open via Google Drive.</p>
+    </div>
+  </div>
+
+  <div class="teaching-grid">
+    <!-- Medical school presentations -->
+    <a class="teach-card" href="https://drive.google.com/open?id=18_auNiJgexdZ3va0gkT8xgVtFEalZ7oI" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">May 2011 · Med school</div><div class="teach-title">Pregnancy-related complications</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/a/kieran101.com/file/d/1o1LoBXc57xEicSW6g_fODyBZRoPTL0en/view?usp=drivesdk" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Apr 2012 · Med school</div><div class="teach-title">Intestinal atresia</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/a/kieran101.com/file/d/1Sd3aIevTS8VQXHwd1b6Vn63yO6oZKQ0_/view?usp=drivesdk" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Jan 2013 · Med school</div><div class="teach-title">Expressive aphasia</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/a/kieran101.com/file/d/16grExiKioLHIJ6wwDpJ1sY32njXnsUEq/view?usp=drivesdk" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">May 2013 · Med school</div><div class="teach-title">Acute glomerulonephritis</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/a/kieran101.com/file/d/1vPagcuv5IEEDTt9_4pjKRHNjWBdOaCTh/view?usp=drivesdk" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">May 2013 · ACTA poster</div><div class="teach-title">Cerebral oximetry, length of stay &amp; renal dysfunction in cardiothoracic surgery</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/a/kieran101.com/file/d/1_ewXIEb149J585boUjxc8w3MBrPvYsDN/view?usp=drivesdk" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Nov 2013 · GP service</div><div class="teach-title">Gliptin audit</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/a/kieran101.com/file/d/1w3dOsqZ1cMlPi9ugwNc6O-VyOdGHWYDZ/view?usp=drivesdk" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Jan 2014 · Med school v1</div><div class="teach-title">Peri-operative management of cardiac surgery patients</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/a/kieran101.com/file/d/1Fr7EU0ou-c_Hy6FWnvDLvOg89Ivpht8g/view?usp=drivesdk" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Jan 2014 · Med school v2</div><div class="teach-title">Post-operative management of cardiac surgery patients</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/file/d/1auWnsR5RteWxkKuMMZKTbm-iPikuZIRh/view?usp=sharing" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Nov 2014 · Med student</div><div class="teach-title">Blood gases and metabolic disturbances</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/a/kieran101.com/file/d/1M34ythksMQs6VxeTB4GvaRR3xTt4a103/view?usp=drivesdk" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Feb 2015 · Audit results</div><div class="teach-title">Prophylactic antibiotics for patients with UGIB</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/file/d/1rHoc-KoMS2Sn-gY_7-ZRE0Byb3Tkucnd/view?usp=sharing" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Mar 2016 · F2 case</div><div class="teach-title">ARDS</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/a/kieran101.com/file/d/1d8NHQWuyHSMqLUPpurbiaLF6TPtqBnEs/view?usp=drivesdk" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">2016 · Cardiovascular</div><div class="teach-title">Influenza vaccines for preventing cardiovascular disease</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/a/kieran101.com/file/d/1a0YJJzJpB2JBlPbX7Z5ojU2Ea3eBCPTP/view?usp=drivesdk" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">2016 · Foundation day</div><div class="teach-title">Iatrogenic blood loss in general ITU</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/file/d/139--PjqdrKe-DHd-l6cFdgRE1zQSjEgC/view?usp=sharing" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Jan 2018 · PG diploma</div><div class="teach-title">Basics of ECG interpretation</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/a/kieran101.com/file/d/1nynud7RyrnXm_aLWwcYdtBDDME6YuVc6/view?usp=drivesdk" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">2018 · Service audit</div><div class="teach-title">BHOC acute oncology service provision audit</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/a/kieran101.com/file/d/1WabTIarcm07UoCM077NgxFfwk1DxXK-9/view?usp=drivesdk" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">2018 · Med ed theory</div><div class="teach-title">Father Christmas</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/a/kieran101.com/file/d/1gOLKuss0ycTHOhVOzJ8fuLZ6MxDnawJc/view?usp=drivesdk" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">2018 · PG diploma</div><div class="teach-title">Cognitivism and constructivism</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/a/kieran101.com/file/d/1Up9wqglYrO1LHJrvP_2hnRqPVogeUbL5/view?usp=drivesdk" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">2018 · Conference</div><div class="teach-title">Neurone-specific enolase for prognostication following OOHCA</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/a/kieran101.com/file/d/12MyznelPkM2GU8A-POAO6RIXaBQJzQGc/view?usp=drivesdk" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">2018 · QI day</div><div class="teach-title">Introduction of electronic record-keeping to the acute oncology department</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/file/d/1cPgP4w_pFK2bcnZPZgM9cytHpGPsvOtE/view?usp=sharing" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Oncology · Teaching</div><div class="teach-title">Malignant hypercalcaemia</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/file/d/1HhMPJ3bmxvPOTf-uMk4chCS9sMdsp-9K/view?usp=sharing" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Oncology · Teaching</div><div class="teach-title">Neutropaenic sepsis</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/file/d/1HHLh41JUblyzHk9PjKW8YqukTWiCF3B0/view?usp=sharing" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Oncology · Teaching</div><div class="teach-title">Metastatic spinal cord compression</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/file/d/1HGjh5DTy-Q-QQcLTQlXFB4pngw1FJKHu/view?usp=sharing" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Oncology · Teaching</div><div class="teach-title">Raised intracranial pressure</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/file/d/1kxJ2UqLFWocaBM8KE35oLc9xGdScDtVJ/view?usp=sharing" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Oncology · Teaching</div><div class="teach-title">Tumour lysis syndrome</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/file/d/1ws3U0OUTf2A7GIIEpPF3gysvd6B-Bqil/view?usp=sharing" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Anaesthesia · Teaching</div><div class="teach-title">Propofol and food allergy</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/open?id=1xfVEK79rF7wkvhHtIeSwoqzdAYxmumis" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Anaesthesia · Teaching</div><div class="teach-title">Airway assessment</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/open?id=11kWEm4A_XKJ70JQfAme2eNitnhkCWtv_" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Critical care · Teaching</div><div class="teach-title">Hyperkalaemia</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/open?id=141DYOo4za7mpqTVRnzI7LQLC209-Rrt1" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">QI · Tool</div><div class="teach-title">Alcohol withdrawal tool</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/open?id=1u9i1v4w1axzPgnLYYlGPSfUgQFaN9F5y" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">2020 · Audit</div><div class="teach-title">Audit meeting presentation (recycling / anaesthetic room)</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/open?id=1q7-xrFR-Vr3-GL9e6-Cq81FPjeTx5-H9" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Clinical · Resource</div><div class="teach-title">Midline instructions</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/file/d/1TpN8erDqf_2T69zdx5-yL9N_xZf9diiQ/view?usp=sharing" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Critical care · Teaching</div><div class="teach-title">Thiamine presentation</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/open?id=1Y1fTAOx4XEa1aybeK13g9aT5VjzS2Fth" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">Paediatrics · Teaching</div><div class="teach-title">Hypotensive child</div></div><span class="teach-arrow">↗</span></a>
+    <a class="teach-card" href="https://drive.google.com/open?id=1RHt_3JcvhGHm2o51AYDJv_Dgr1zOEXl4" target="_blank"><div class="teach-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="teach-body"><div class="teach-label">2020 · AAGBI poster</div><div class="teach-title">Winter scientific meeting poster</div></div><span class="teach-arrow">↗</span></a>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- DOWNLOADS -->
+<section class="section reveal" id="downloads">
+  <div class="section-label">Publications &amp; essays</div>
+  <h2 class="section-title">Downloads</h2>
+  <p class="section-lead">Journal publications, medical essays, service audits and clinical articles available to read or download via Google Drive.</p>
+  <div class="downloads-layout">
+    <div>
+      <div class="downloads-col-title">Journal publications</div>
+      <div class="downloads-col-sub">Peer-reviewed papers available in full via Google Drive.</div>
+      <div class="dl-list">
+        <a class="dl-item" href="https://drive.google.com/a/kieran101.com/file/d/1RdzJNG-DK5dpnWeOiptQg8YQ8KNopP7O/view?usp=drivesdk" target="_blank"><div class="dl-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="dl-meta"><div class="dl-type">2008 · Journal of Cell Science</div><div class="dl-title">Evaluating cytochrome c diffusion in the intermembrane spaces of mitochondria during cytochrome c release</div></div><span class="dl-arrow">↗</span></a>
+        <a class="dl-item" href="https://drive.google.com/a/kieran101.com/file/d/1AhhI7l4kBxG_Sc7cvZBG03V-f14qJJTJ/view?usp=drivesdk" target="_blank"><div class="dl-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="dl-meta"><div class="dl-type">2013 · Journal of Virology</div><div class="dl-title">Suppression of HIV-1 Infection by APOBEC3 Proteins in Primary Human CD4+ T Cells</div></div><span class="dl-arrow">↗</span></a>
+        <a class="dl-item" href="https://drive.google.com/a/kieran101.com/file/d/1a9QfWYTDBlsAFhxs_HJW2BVRNqVVU5qt/view?usp=drivesdk" target="_blank"><div class="dl-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="dl-meta"><div class="dl-type">2015 · Ann R Coll Surg Engl</div><div class="dl-title">Waterlow score as a surrogate marker for predicting adverse outcome in acute pancreatitis</div></div><span class="dl-arrow">↗</span></a>
+        <a class="dl-item" href="https://drive.google.com/a/kieran101.com/file/d/1b-tSKOwqwbdyS6wBdUeZ-TUrsN1mV8vz/view?usp=drivesdk" target="_blank"><div class="dl-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="dl-meta"><div class="dl-type">2018 · Resuscitation</div><div class="dl-title">Serial NSE measurement identifies non-survivors following out-of-hospital cardiac arrest</div></div><span class="dl-arrow">↗</span></a>
+        <a class="dl-item" href="https://drive.google.com/a/kieran101.com/file/d/1DtBNP9O2j146zGDecWs98BPc76uyfSnK/view?usp=drivesdk" target="_blank"><div class="dl-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="dl-meta"><div class="dl-type">2018 · Int J Health Plan Manag</div><div class="dl-title">Financial implications of laparoscopic hot gallbladder service in a non-tertiary DGH</div></div><span class="dl-arrow">↗</span></a>
+      </div>
+    </div>
+    <div>
+      <div class="downloads-col-title">Essays, audits &amp; articles</div>
+      <div class="downloads-col-sub">Medical school essays, postgraduate diploma submissions, service audits and teaching articles.</div>
+      <div class="dl-list">
+        <a class="dl-item" href="https://drive.google.com/file/d/1Efy3w7tKVwYH9TxFg0gu4R-VJU1vUjkX/view?usp=sharing" target="_blank"><div class="dl-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="dl-meta"><div class="dl-type">Oct 2012 · Essay</div><div class="dl-title">Marfan syndrome: Past, Present and Future</div></div><span class="dl-arrow">↗</span></a>
+        <a class="dl-item" href="https://drive.google.com/file/d/1_94pt6j_yb5wVZ13--6_kpawn9obgZR1/view?usp=sharing" target="_blank"><div class="dl-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="dl-meta"><div class="dl-type">Nov 2012 · Essay</div><div class="dl-title">What are the challenges in applying the Liverpool Care Pathway for the dying?</div></div><span class="dl-arrow">↗</span></a>
+        <a class="dl-item" href="https://drive.google.com/a/kieran101.com/file/d/1rb3HxBBDXlD61CSktMik2QN28AYsYu62/view?usp=drivesdk" target="_blank"><div class="dl-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="dl-meta"><div class="dl-type">Oct 2013 · Service audit</div><div class="dl-title">Prescription of gliptins in a primary care setting</div></div><span class="dl-arrow">↗</span></a>
+        <a class="dl-item" href="https://drive.google.com/a/kieran101.com/file/d/1Dh7pHCMLuh8FvlAtBjgG_frxSJk1av-g/view?usp=drivesdk" target="_blank"><div class="dl-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="dl-meta"><div class="dl-type">Jan 2018 · PG diploma essay</div><div class="dl-title">Basics of ECG interpretation</div></div><span class="dl-arrow">↗</span></a>
+        <a class="dl-item" href="https://drive.google.com/a/kieran101.com/file/d/18pkoz7SS_vn6b-8NC-ykvd3ZTkJp-Wh_/view?usp=drivesdk" target="_blank"><div class="dl-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="dl-meta"><div class="dl-type">Mar 2018 · PG diploma essay</div><div class="dl-title">Assessment of ethical competence</div></div><span class="dl-arrow">↗</span></a>
+        <a class="dl-item" href="https://drive.google.com/file/d/1p4ODEKLBrpCUvy7m4MxNF5L9Vs20FlGL/view?usp=sharing" target="_blank"><div class="dl-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="dl-meta"><div class="dl-type">2018 · Audit</div><div class="dl-title">Triage and management of capecitabine-related diarrhoea</div></div><span class="dl-arrow">↗</span></a>
+        <a class="dl-item" href="https://drive.google.com/file/d/10wI4msw36YXW_jHxPP28Mpb2D9s0YbJk/view?usp=sharing" target="_blank"><div class="dl-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="dl-meta"><div class="dl-type">2018 · Service audit</div><div class="dl-title">BHOC Acute Oncology Assessment Unit service provision audit</div></div><span class="dl-arrow">↗</span></a>
+        <a class="dl-item" href="https://drive.google.com/file/d/1bgaBbbC5I8JnCwSiIwB6iC0Ok-x8eYif/view?usp=sharing" target="_blank"><div class="dl-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="dl-meta"><div class="dl-type">2018 · QI report</div><div class="dl-title">Introduction of electronic record keeping to the BHOC acute oncology assessment unit</div></div><span class="dl-arrow">↗</span></a>
+        <a class="dl-item" href="https://drive.google.com/file/d/1c6QDFvFLaITib6RMjLuB1w1pAI5OHwLB/view?usp=sharing" target="_blank"><div class="dl-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="dl-meta"><div class="dl-type">Clinical teacher · Article</div><div class="dl-title">Clinical Teacher article — Acute oncology bitesize</div></div><span class="dl-arrow">↗</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- MUSIC -->
+<section class="section reveal" id="music">
+  <div class="music-layout">
+    <div>
+      <div class="section-label">Outside of medicine</div>
+      <h2 class="section-title">Music</h2>
+      <p class="section-lead">Music has been part of my life since childhood — from choral singing and brass performance to music production and DJing drum &amp; bass as DJ Cell Suicide. There's something about the discipline and the performance aspect that feels remarkably similar to clinical practice.</p>
+      <div class="music-genres"><span class="genre-tag">Choral</span><span class="genre-tag">Brass</span><span class="genre-tag">EDM</span></div>
+      <div class="music-instruments">
+        <div class="music-item"><span class="music-item-name">Trumpet</span><span class="music-item-level">Brass</span></div>
+        <div class="music-item"><span class="music-item-name">Euphonium</span><span class="music-item-level">Brass</span></div>
+        <div class="music-item"><span class="music-item-name">Tuba</span><span class="music-item-level">Brass</span></div>
+        <div class="music-item"><span class="music-item-name">Voice</span><span class="music-item-level">Choral</span></div>
+        <div class="music-item"><span class="music-item-name">Music production &amp; DJing</span><span class="music-item-level">EDM</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="section-label" style="margin-bottom:0.5rem;">DJ Cell Suicide</div>
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1.25rem;line-height:1.7;">14 mixes — drum &amp; bass, DNB, jungle.</p>
+      <div class="mix-list">
+        <div class="mix-item"><div class="mix-item-header"><div class="mix-icon"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div><span class="mix-title">Acidic Records Party Mix</span><a class="mix-download" href="/audio/Acidic Records Party - December 2012.m4a" download>↓ Download</a></div><audio controls preload="none"><source src="/audio/Acidic Records Party - December 2012.m4a" type="audio/mp4"></audio></div>
+        <div class="mix-item"><div class="mix-item-header"><div class="mix-icon"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div><span class="mix-title">Royal Braindrop</span><a class="mix-download" href="/audio/Royal Braindrop.m4a" download>↓ Download</a></div><audio controls preload="none"><source src="/audio/Royal Braindrop.m4a" type="audio/mp4"></audio></div>
+        <div class="mix-item"><div class="mix-item-header"><div class="mix-icon"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div><span class="mix-title">Flush</span><a class="mix-download" href="/audio/Flush - Jan 2011.m4a" download>↓ Download</a></div><audio controls preload="none"><source src="/audio/Flush - Jan 2011.m4a" type="audio/mp4"></audio></div>
+        <div class="mix-item"><div class="mix-item-header"><div class="mix-icon"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div><span class="mix-title">Braindrop RoboPirate Boat Rave</span><a class="mix-download" href="/audio/Braindrop RoboPirate Boat Rave set.m4a" download>↓ Download</a></div><audio controls preload="none"><source src="/audio/Braindrop RoboPirate Boat Rave set.m4a" type="audio/mp4"></audio></div>
+        <div class="mix-item"><div class="mix-item-header"><div class="mix-icon"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div><span class="mix-title">Braindrop @ Matter Mix</span><a class="mix-download" href="/audio/Braindrop Matter Competition Mix.m4a" download>↓ Download</a></div><audio controls preload="none"><source src="/audio/Braindrop Matter Competition Mix.m4a" type="audio/mp4"></audio></div>
+        <div class="mix-item"><div class="mix-item-header"><div class="mix-icon"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div><span class="mix-title">Temple of Bass</span><a class="mix-download" href="/audio/Temple of Bass set - March 2010.m4a" download>↓ Download</a></div><audio controls preload="none"><source src="/audio/Temple of Bass set - March 2010.m4a" type="audio/mp4"></audio></div>
+        <div class="mix-item"><div class="mix-item-header"><div class="mix-icon"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div><span class="mix-title">Flush Reboot</span><a class="mix-download" href="/audio/Flush - Jan 2009.m4a" download>↓ Download</a></div><audio controls preload="none"><source src="/audio/Flush - Jan 2009.m4a" type="audio/mp4"></audio></div>
+        <div class="mix-item"><div class="mix-item-header"><div class="mix-icon"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div><span class="mix-title">Birthday Flush</span><a class="mix-download" href="/audio/Birthday Flush - April 2009.m4a" download>↓ Download</a></div><audio controls preload="none"><source src="/audio/Birthday Flush - April 2009.m4a" type="audio/mp4"></audio></div>
+        <div class="mix-item"><div class="mix-item-header"><div class="mix-icon"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div><span class="mix-title">Retox Mix</span><a class="mix-download" href="/audio/2002 Retox Mix.m4a" download>↓ Download</a></div><audio controls preload="none"><source src="/audio/2002 Retox Mix.m4a" type="audio/mp4"></audio></div>
+        <div class="mix-item"><div class="mix-item-header"><div class="mix-icon"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div><span class="mix-title">Elysian Set</span><a class="mix-download" href="/audio/Elysian Set - Feb 2010.m4a" download>↓ Download</a></div><audio controls preload="none"><source src="/audio/Elysian Set - Feb 2010.m4a" type="audio/mp4"></audio></div>
+        <div class="mix-item"><div class="mix-item-header"><div class="mix-icon"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div><span class="mix-title">The Gathering</span><a class="mix-download" href="/audio/The Gathering - 28214.m4a" download>↓ Download</a></div><audio controls preload="none"><source src="/audio/The Gathering - 28214.m4a" type="audio/mp4"></audio></div>
+        <div class="mix-item"><div class="mix-item-header"><div class="mix-icon"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div><span class="mix-title">The Gathering Reboot</span><a class="mix-download" href="/audio/The Gathering - 28214 - Promo Mix.m4a" download>↓ Download</a></div><audio controls preload="none"><source src="/audio/The Gathering - 28214 - Promo Mix.m4a" type="audio/mp4"></audio></div>
+        <div class="mix-item"><div class="mix-item-header"><div class="mix-icon"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div><span class="mix-title">Acidic Records Promo Mix – Rhythm Factory</span><a class="mix-download" href="/audio/Acidic Records Promo Mix - 12th of April at the Rhythm Factory.m4a" download>↓ Download</a></div><audio controls preload="none"><source src="/audio/Acidic Records Promo Mix - 12th of April at the Rhythm Factory.m4a" type="audio/mp4"></audio></div>
+        <div class="mix-item"><div class="mix-item-header"><div class="mix-icon"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div><span class="mix-title">Flush Taster</span><a class="mix-download" href="/audio/Flush September 2012 Taster.m4a" download>↓ Download</a></div><audio controls preload="none"><source src="/audio/Flush September 2012 Taster.m4a" type="audio/mp4"></audio></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CONTACT -->
+<section class="section reveal" id="contact">
+  <div class="section-label">Get in touch</div>
+  <h2 class="section-title">Contact</h2>
+  <div class="contact-layout">
+    <div>
+      <p class="section-lead">Whether you'd like to discuss research collaboration, clinical questions, speaking invitations, or simply say hello — I'd love to hear from you.</p>
+      <div class="contact-methods">
+        <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="contact-item-label">Email</div><div class="contact-item-val"><a href="mailto:kieran@kieran101.com">kieran@kieran101.com</a></div></div></div>
+        <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.6 3.4 2 2 0 0 1 3.57 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.08 6.08l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg></div><div><div class="contact-item-label">Phone</div><div class="contact-item-val">+64 (0) 21 0246 8390</div></div></div>
+        <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><div class="contact-item-label">Location</div><div class="contact-item-val">16 Herald Street, Wellington 6023, New Zealand</div></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="contact-form">
+        <div class="form-group"><label class="form-label" for="name">Name</label><input type="text" id="name" class="form-input" placeholder="Your name"></div>
+        <div class="form-group"><label class="form-label" for="email">Email</label><input type="email" id="email" class="form-input" placeholder="your@email.com"></div>
+        <div class="form-group"><label class="form-label" for="message">Message</label><textarea id="message" class="form-textarea" placeholder="What would you like to discuss?"></textarea></div>
+        <button class="btn btn-primary" id="submit-btn" style="align-self:flex-start;transition:opacity 0.2s" onclick="handleContact()">Send message</button>
+        <div id="form-msg" style="font-size:0.85rem;color:var(--accent);display:none;line-height:1.6;">✓ Message sent — I'll be in touch soon.</div>
+        <div id="form-err" style="font-size:0.85rem;color:#a32d2d;display:none;line-height:1.6;">Something went wrong. Please try emailing <a href="mailto:kieran@kieran101.com" style="color:#a32d2d;">kieran@kieran101.com</a> directly.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<footer>
+  <span class="footer-brand">Kieran Gillick</span>
+  <span class="footer-copy">FRCA · PhD · MBBS &nbsp;·&nbsp; Wellington, New Zealand &nbsp;·&nbsp; &copy; 2026</span>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20));
+  function toggleMenu() { document.getElementById('nav-links').classList.toggle('open'); }
+  document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => document.getElementById('nav-links').classList.remove('open')));
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.06 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  async function handleContact() {
+    const n = document.getElementById('name').value.trim();
+    const e = document.getElementById('email').value.trim();
+    const m = document.getElementById('message').value.trim();
+    if (!n || !e || !m) { alert('Please fill in all fields.'); return; }
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true; btn.textContent = 'Sending\u2026';
+    document.getElementById('form-msg').style.display = 'none';
+    document.getElementById('form-err').style.display = 'none';
+    try {
+      const res = await fetch('https://formspree.io/f/mreowzll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ name: n, email: e, message: m })
+      });
+      if (res.ok) {
+        document.getElementById('form-msg').style.display = 'block';
+        document.querySelectorAll('.contact-form input, .contact-form textarea').forEach(el => el.value = '');
+      } else { throw new Error(); }
+    } catch {
+      document.getElementById('form-err').style.display = 'block';
+    } finally {
+      btn.disabled = false; btn.textContent = 'Send message';
+    }
+  }
+</script>
+</body>
+</html>
